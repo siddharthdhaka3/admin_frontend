@@ -2,16 +2,18 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Box, Typography, TextField, Button, Container } from "@mui/material";
-
+import { useAppDispatch } from "../store/store";
+import { setTokens } from "../store/authReducer";
 interface User {
   name: string;
-  phoneNumber: string;
-  password: string; // New password field
+  email: string; // Switched from phoneNumber to email
+  password: string;
 }
 
 const Home: React.FC = () => {
-  const [formData, setFormData] = useState<User>({ name: "", phoneNumber: "", password: "" });
+  const [formData, setFormData] = useState<User>({ name: "", email: "", password: "" });
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,16 +23,33 @@ const Home: React.FC = () => {
     e.preventDefault();
 
     try {
-      // Make API call to verify user
-      const response = await verifyUser(formData);
-    
-      // Determine if user is admin or regular user based on API response
-      if (response.isAdmin) {
-        // Navigate to admin page
-        navigate("/admin");
-      } else {
-        // Navigate to user page
-        navigate("/user");
+      // const response = await verifyUser(formData);
+
+      // if (response.isAdmin) {
+      //   // Navigate to admin page
+      //   navigate("/admin");
+      // } else {
+      //   // Navigate to user page
+      //   navigate("/user");
+      // }
+      const response = await axios.post("http://localhost:4000/api/user/login", formData);
+
+      if(response){
+        console.log(response);
+        const accessToken = response.data.data.accessToken;
+        console.log(response.data.data.user.isAdmin);
+        dispatch(setTokens({
+          accessToken: accessToken,
+          refreshToken: '',
+          isAuthenticated:true,
+          isAdmin: response.data.data.user.isAdmin
+      })); 
+        if(response.data.data.user.isAdmin){
+          navigate("/admin");
+        }
+        else{
+          navigate("/user");
+        }
       }
     } catch (error) {
       console.error("Error verifying user:", error);
@@ -38,16 +57,16 @@ const Home: React.FC = () => {
     }
   };
 
-  const verifyUser = async (user: User) => {
-    try {
-      // Make API call to verify user
-      const response = await axios.post<{ isAdmin: boolean }>("http://localhost:4000/api/user/", user);
-      return response.data;
-    } catch (error) {
-      console.error("Error verifying user:", error);
-      throw error; // Rethrow the error for handling in the handleSubmit function
-    }
-  };
+  // const verifyUser = async (user: User) => {
+  //   try {
+  //     // Make API call to verify user
+  //     const response = await axios.post<{ isAdmin: boolean }>("http://localhost:4000/api/user/login", user);
+  //     return response.data;
+  //   } catch (error) {
+  //     console.error("Error verifying user:", error);
+  //     throw error; // Rethrow the error for handling in the handleSubmit function
+  //   }
+  // };
   
   return (
     <Container maxWidth="sm">
@@ -69,18 +88,18 @@ const Home: React.FC = () => {
               style={{ marginBottom: '16px' }}
             />
             <TextField
-              label="Phone Number"
+              label="Email" // Switched from "Phone Number" to "Email"
               variant="outlined"
-              id="phoneNumber"
-              name="phoneNumber"
-              value={formData.phoneNumber}
+              id="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
               required
               fullWidth
               style={{ marginBottom: '16px' }}
             />
             <TextField
-              label="Password" // New password field
+              label="Password"
               variant="outlined"
               id="password"
               name="password"
