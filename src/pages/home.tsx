@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../App.css"; // Import app.css
+import { Box, Typography, TextField, Button, Container } from "@mui/material";
 
 interface User {
   name: string;
   phoneNumber: string;
+  password: string; // New password field
 }
 
 const Home: React.FC = () => {
-  const [formData, setFormData] = useState<User>({ name: "", phoneNumber: "" });
+  const [formData, setFormData] = useState<User>({ name: "", phoneNumber: "", password: "" });
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -49,36 +50,54 @@ const Home: React.FC = () => {
   };
   
   return (
-    <div className="container">
-      <h1 className="title">Home Page</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="name">Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="input"
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="phoneNumber">Phone Number:</label>
-          <input
-            type="text"
-            id="phoneNumber"
-            name="phoneNumber"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            className="input"
-            required
-          />
-        </div>
-        <button type="submit" className="button">Submit</button>
-      </form>
-    </div>
+    <Container maxWidth="sm">
+      <Box mt={4}>
+        <Typography variant="h2" align="center" gutterBottom>
+          Home Page
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <TextField
+              label="Name"
+              variant="outlined"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              fullWidth
+              style={{ marginBottom: '16px' }}
+            />
+            <TextField
+              label="Phone Number"
+              variant="outlined"
+              id="phoneNumber"
+              name="phoneNumber"
+              value={formData.phoneNumber}
+              onChange={handleChange}
+              required
+              fullWidth
+              style={{ marginBottom: '16px' }}
+            />
+            <TextField
+              label="Password" // New password field
+              variant="outlined"
+              id="password"
+              name="password"
+              type="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              fullWidth
+              style={{ marginBottom: '16px' }}
+            />
+            <Button type="submit" variant="contained" color="primary">
+              Submit
+            </Button>
+          </Box>
+        </form>
+      </Box>
+    </Container>
   );
 };
 
