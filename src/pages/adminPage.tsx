@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { RootState } from '../store/store';
-import { addUser, updateUserStatus } from '../store/userSlice'; // Assuming addUser and updateUserStatus actions are defined in userSlice
+import { addUser, updateUserStatus, deleteUser } from '../store/userSlice'; 
 import axios from "axios";
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -13,6 +13,8 @@ import TableRow from '@material-ui/core/TableRow';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Grid from '@material-ui/core/Grid';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -22,7 +24,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     header: {
       marginBottom: theme.spacing(2),
-      fontSize: '2rem', // Adjust font size
+      fontSize: '2rem', 
       fontWeight: 'bold',
     },
     table: {
@@ -68,6 +70,13 @@ const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: 'grey',
       color: 'white',
     },
+    deleteButton: {
+      backgroundColor: 'red',
+      color: 'white',
+      '&:hover': {
+        backgroundColor: 'darkred',
+      },
+    },
   }),
 );
 
@@ -111,7 +120,8 @@ const AdminPage: React.FC = () => {
       }
     })
       .then(response => {
-        // Dispatch action to add fetched users to the Redux store
+        console.log("once");
+        
         response.data.forEach(user => {
           dispatch(addUser(user));
         });
@@ -119,7 +129,8 @@ const AdminPage: React.FC = () => {
       .catch(error => {
         console.error('Error fetching users:', error);
       });
-  }, [dispatch]);
+  }, []); // Empty dependency array to run effect only once
+  
 
   const handleToggleUserStatus = async (id: string, blocked: boolean) => {
     try {
@@ -134,6 +145,22 @@ const AdminPage: React.FC = () => {
       }
     } catch (error) {
       console.error('Error toggling user status:', error);
+    }
+  };
+
+  const handleDeleteUser = async (id: string) => {
+    try {
+      const response = await axios.delete(`http://localhost:4000/api/user/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+      if (response.status === 200) {
+        // Remove the user from the Redux store
+        dispatch(deleteUser(id));
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
     }
   };
 
@@ -193,6 +220,12 @@ const AdminPage: React.FC = () => {
                     className={user.blocked ? classes.disabledButton : classes.disableButton}
                   >
                     {user.blocked ? 'Enable' : 'Disable'}
+                  </Button>
+                  <Button
+                    onClick={() => handleDeleteUser(user._id)}
+                    className={classes.deleteButton}
+                  >
+                    <DeleteIcon />
                   </Button>
                 </TableCell>
               </TableRow>

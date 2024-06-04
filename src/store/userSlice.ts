@@ -28,10 +28,14 @@ export const userSlice = createSlice({
         user._id === userId ? { ...user, blocked: blocked } : user
       );
     },
+    deleteUser: (state, action: PayloadAction<string>) => {
+      const userId = action.payload;
+      state.users = state.users.filter(user => user._id !== userId);
+    },
     // Add other user-related actions here
   },
 });
 
-export const { addUser, updateUserStatus } = userSlice.actions;
+export const { addUser, updateUserStatus, deleteUser } = userSlice.actions;
 
 export default userSlice.reducer;

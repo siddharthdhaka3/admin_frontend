@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../store/store';
+import { RootState } from '../store/store'; // Import your RootState type from your Redux store
 
 interface ProtectedProps {
   children: React.ReactNode;
 }
 
 const Protected: React.FC<ProtectedProps> = ({ children }) => {
-  const authStatus = useSelector((state: any) => state.auth.isAuthenticated);
-  const isAdmin = useSelector((state: any) => state.auth.isAdmin);
+  console.log("protected compran");
+  
+  const authStatus = useAppSelector((state: RootState) => state.auth.isAuthenticated);
+  const isAdmin = useAppSelector((state: RootState) => state.auth.isAdmin);
   const navigate = useNavigate();
-  const [loader, setLoader] = useState<boolean>(true);
-    console.log(
-        "ccc"
-    );
-    
+
   useEffect(() => {
     const handleNavigation = () => {
-        console.log("executed");
-        
       if (authStatus) {
         if (isAdmin) {
           navigate("/admin");
@@ -28,13 +25,17 @@ const Protected: React.FC<ProtectedProps> = ({ children }) => {
       } else {
         navigate("/");
       }
-      setLoader(false);
     };
 
     handleNavigation();
   }, [authStatus, isAdmin, navigate]);
 
-  return loader ? null : <>{children}</>;
+  if (!authStatus) {
+    return null; // Redirecting to login page, so no need to render anything
+  }
+
+  // Render children only if user is authenticated
+  return <>{children}</>;
 };
 
 export default Protected;

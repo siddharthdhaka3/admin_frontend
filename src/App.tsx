@@ -5,13 +5,7 @@ import Basic from "./layout/basic";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Basic />}>
-          <Route index element={<Home />} />
-        </Route>
-      </Routes>
-    </Router>
+    <></>
   );
 }
 
