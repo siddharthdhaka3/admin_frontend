@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
-  id: string;
+  _id: string;
+  name: string;
   email: string;
+  blocked: boolean;
 }
 
 interface UserState {
@@ -20,10 +22,16 @@ export const userSlice = createSlice({
     addUser: (state, action: PayloadAction<User>) => {
       state.users.push(action.payload);
     },
+    updateUserStatus: (state, action: PayloadAction<{ userId: string; blocked: boolean }>) => {
+      const { userId, blocked } = action.payload;
+      state.users = state.users.map(user =>
+        user._id === userId ? { ...user, blocked: blocked } : user
+      );
+    },
     // Add other user-related actions here
   },
 });
 
-export const { addUser } = userSlice.actions;
+export const { addUser, updateUserStatus } = userSlice.actions;
 
 export default userSlice.reducer;
