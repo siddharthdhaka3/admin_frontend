@@ -120,7 +120,7 @@ const AdminPage: React.FC = () => {
       }
     })
       .then(response => {
-        console.log("once");
+        // console.log("once");
         
         response.data.forEach(user => {
           dispatch(addUser(user));
