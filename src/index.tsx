@@ -9,6 +9,7 @@ import { store } from "./store/store";
 import  Home  from "./pages/home";
 import Admin from "./pages/adminPage";
 import User from "./pages/userPage";
+import NewUser from "./pages/newUser";
 import  Protected  from "./layout/protected"
 
 // };
@@ -35,7 +36,14 @@ const router = createBrowserRouter ([
         <User />
       </Protected>
     )
+  },
+  {
+    path: "/newUser",
+    element: (
+        <NewUser />
+    )
   }
+  
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

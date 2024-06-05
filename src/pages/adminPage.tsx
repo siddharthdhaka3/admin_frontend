@@ -9,6 +9,7 @@ import Grid from '@material-ui/core/Grid';
 import AdminHeader from '../components/AdminHeader';
 import AddUserForm from '../components/AddUserForm';
 import UserTable from '../components/UserTable';
+import { useGetAllUsersQuery } from '../services/api';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -33,39 +34,33 @@ const AdminPage: React.FC = () => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
 
-  // Fetch users from Redux store
-  const allUsers = useAppSelector((state: RootState) => state.user.users);
-  const token = useAppSelector((state: RootState)=> state.auth.accessToken); 
-
+  // Fetch users using the generated query hook
+  const { data: allUsers = [], isSuccess } = useGetAllUsersQuery();
+  console.log(allUsers);
+  
+  // Automatically adds users to the Redux store when data changes
   useEffect(() => {
-    // Fetch users from backend
-    axios.get<User[]>('http://localhost:4000/api/user/all', {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      }
-    })
-      .then(response => {
-        response.data.forEach(user => {
-          dispatch(addUser(user));
-        });
-      })
-      .catch(error => {
-        console.error('Error fetching users:', error);
+    if (isSuccess) {
+      allUsers.forEach(user => {
+        dispatch(addUser(user));
       });
-  }, []); // Empty dependency array to run effect only once
-
-  return (
-    <div className={classes.root}>
-      <AdminHeader />
-      <Typography variant="body1">Add new user through email:</Typography>
-      <Grid container>
-        <Grid item xs={12} className={classes.formContainer}>
-          <AddUserForm />
+    }
+  }, [dispatch, allUsers, isSuccess]);
+  
+    return (
+      <div className={classes.root}>
+        <AdminHeader />
+        <Typography variant="body1">Add new user through email:</Typography>
+        <Grid container>
+          <Grid item xs={12} className={classes.formContainer}>
+            <AddUserForm />
+          </Grid>
         </Grid>
-      </Grid>
-      <UserTable users={allUsers} />
-    </div>
-  );
-};
+        <UserTable />
+      </div>
+    );
+  };
+  
+  export default AdminPage; // Empty dependency array to run effect only once
 
-export default AdminPage;
+  

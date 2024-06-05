@@ -1,3 +1,4 @@
+// UserTable.tsx
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
@@ -8,11 +9,11 @@ import TableCell from '@material-ui/core/TableCell';
 import Button from '@material-ui/core/Button';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
-import axios from "axios";
 import { useAppSelector } from "../store/store";
 import { RootState } from '../store/store';
 import { useAppDispatch } from "../store/store";
 import { updateUserStatus, deleteUser } from '../store/userSlice'; 
+import { useUpdateUserStatusMutation, useDeleteUserMutation } from '../services/api'; // Import mutation hooks
 
 interface User {
   _id: string;
@@ -22,7 +23,6 @@ interface User {
 }
 
 interface UserTableProps {
-  users: User[];
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -49,21 +49,21 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 );
 
-const UserTable: React.FC<UserTableProps> = ({ users }) => {
+const UserTable: React.FC<UserTableProps> = () => {
+  const users = useAppSelector((state: RootState) => state.user.users);
   const classes = useStyles();
   const dispatch = useAppDispatch();
-  const token = useAppSelector((state: RootState)=> state.auth.accessToken); 
+  // const token = useAppSelector((state: RootState)=> state.auth.accessToken); 
+
+  const [updateUserStatusMutation] = useUpdateUserStatusMutation(); // Mutation hook for updating user status
+  const [deleteUserMutation] = useDeleteUserMutation(); // Mutation hook for deleting user
 
   const handleToggleUserStatus = async (id: string, blocked: boolean) => {
     try {
-      const response = await axios.put(`http://localhost:4000/api/user/${id}`, { blocked: !blocked }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
-      if (response.status === 200) {
+      const response = await updateUserStatusMutation({ id, blocked: !blocked }); // Use mutation hook to update user status
+      if ('data' in response && response.data) {
         // Update the user status in the Redux store
-        dispatch(updateUserStatus({ userId: id, blocked: !blocked }));
+        dispatch(updateUserStatus({ id: id, blocked: !blocked }));
       }
     } catch (error) {
       console.error('Error toggling user status:', error);
@@ -72,12 +72,8 @@ const UserTable: React.FC<UserTableProps> = ({ users }) => {
 
   const handleDeleteUser = async (id: string) => {
     try {
-      const response = await axios.delete(`http://localhost:4000/api/user/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      });
-      if (response.status === 200) {
+      const response = await deleteUserMutation(id); // Use mutation hook to delete user
+      if ('data' in response && response.data) {
         // Remove the user from the Redux store
         dispatch(deleteUser(id));
       }

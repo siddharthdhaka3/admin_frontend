@@ -22,10 +22,10 @@ export const userSlice = createSlice({
     addUser: (state, action: PayloadAction<User>) => {
       state.users.push(action.payload);
     },
-    updateUserStatus: (state, action: PayloadAction<{ userId: string; blocked: boolean }>) => {
-      const { userId, blocked } = action.payload;
+    updateUserStatus: (state, action: PayloadAction<{ id: string; blocked: boolean }>) => {
+      const { id, blocked } = action.payload;
       state.users = state.users.map(user =>
-        user._id === userId ? { ...user, blocked: blocked } : user
+        user._id === id ? { ...user, blocked: blocked } : user
       );
     },
     deleteUser: (state, action: PayloadAction<string>) => {
