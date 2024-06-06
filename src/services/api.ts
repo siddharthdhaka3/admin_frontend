@@ -61,7 +61,15 @@ export const userApi = createApi({
       }),
     }),
     
+    resetPassword: builder.mutation<void, { Password: string }>({
+      query: ({ Password }) => ({
+        url: 'user/reset-password',
+        method: 'POST',
+        body: { Password },
+      }),
+    }),
   }),
+  
 });
 
 // Export hooks for accessing the endpoints
@@ -71,5 +79,6 @@ export const {
   useUpdateUserStatusMutation, 
   useLoginUserMutation,
   useRegisterUserWithResetLinkMutation,
-  useRegisterUserMutation // Add this line to export the update user mutation hook
+  useRegisterUserMutation,
+  useResetPasswordMutation // Add this line to export the update user mutation hook
 } = userApi;

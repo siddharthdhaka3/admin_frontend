@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Box, Typography, TextField, Button, Container } from "@mui/material";
+import { Box, Typography, TextField, Button, Container, Link } from "@mui/material";
 import { useAppDispatch } from "../store/store";
 import { setTokens } from "../store/authReducer";
 import { useLoginUserMutation } from "../services/api";
@@ -8,6 +8,7 @@ import { useLoginUserMutation } from "../services/api";
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showForgotPassword, setShowForgotPassword] = useState(false); // New state for showing/hiding the "Forgot Password" button
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [loginUser, { isLoading }] = useLoginUserMutation();
@@ -33,7 +34,7 @@ const Login: React.FC = () => {
       }
     } catch (error) {
       console.error("Error verifying user:", error);
-      // Handle error
+      setShowForgotPassword(true); // Show the "Forgot Password" button if authentication fails
     }
   };
 
@@ -70,6 +71,9 @@ const Login: React.FC = () => {
             <Button type="submit" variant="contained" color="primary" disabled={isLoading}>
               {isLoading ? "Logging in..." : "Login"}
             </Button>
+            {showForgotPassword && ( // Render the "Forgot Password" button if showForgotPassword is true
+              <Link href="/forgot-password" style={{ marginTop: '16px' }}>Forgot Password</Link>
+            )}
           </Box>
         </form>
       </Box>
