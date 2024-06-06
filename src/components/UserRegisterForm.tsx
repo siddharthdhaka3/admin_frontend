@@ -1,28 +1,57 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useUpdateUserMutation } from '../services/api';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 const UpdateUserForm: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
-  const [updateUser, { isLoading, isError }] = useUpdateUserMutation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      await updateUser({ name, email, phoneNumber, password });
-      navigate('/'); // Redirect to home page after successful update
-    } catch (error) {
-      console.error('Error updating user:', error);
+    
+    const urlParams = new URLSearchParams(location.search);
+    const token = urlParams.get('token');
+    
+    // If token is present in the URL, make the API call
+    if (token) {
+      setIsLoading(true);
+      try {
+        // Make the API call using Axios
+        const response = await axios.put(
+          `http://localhost:4000/api/user/email/${email}`,
+          { name, email, phoneNumber, password },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        // Optionally handle the response, e.g., show success message
+        console.log('User updated:', response.data);
+
+        // Redirect to home page after successful update
+        navigate('/');
+      } catch (error) {
+        console.error('Error updating user:', error);
+        setIsError(true);
+      } finally {
+        setIsLoading(false);
+      }
+    } else {
+      console.error('Token not found in URL');
     }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: 'auto' }}>
-      <h2 style={{ textAlign: 'center' }}>Update User</h2>
+    <div style={{ maxWidth: '400px', margin: 'auto', padding: '20px', border: '1px solid #ccc', borderRadius: '5px' }}>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Register User</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '1rem' }}>
           <label htmlFor="name">Name:</label>
@@ -32,7 +61,7 @@ const UpdateUserForm: React.FC = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            style={{ width: '100%', padding: '0.5rem' }}
+            style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '3px' }}
           />
         </div>
         <div style={{ marginBottom: '1rem' }}>
@@ -43,7 +72,7 @@ const UpdateUserForm: React.FC = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: '100%', padding: '0.5rem' }}
+            style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '3px' }}
           />
         </div>
         <div style={{ marginBottom: '1rem' }}>
@@ -54,7 +83,7 @@ const UpdateUserForm: React.FC = () => {
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
             required
-            style={{ width: '100%', padding: '0.5rem' }}
+            style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '3px' }}
           />
         </div>
         <div style={{ marginBottom: '1rem' }}>
@@ -65,10 +94,10 @@ const UpdateUserForm: React.FC = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: '100%', padding: '0.5rem' }}
+            style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '3px' }}
           />
         </div>
-        <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '0.5rem' }}>
+        <button type="submit" disabled={isLoading} style={{ width: '100%', padding: '0.5rem', backgroundColor: '#007bff', color: '#fff', border: 'none', borderRadius: '3px', cursor: 'pointer' }}>
           {isLoading ? 'Updating...' : 'Update'}
         </button>
         {isError && <div style={{ color: 'red', marginTop: '0.5rem' }}>Error updating user. Please try again.</div>}

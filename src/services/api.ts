@@ -60,13 +60,6 @@ export const userApi = createApi({
         body: { email },
       }),
     }),
-    updateUser: builder.mutation<User, {name: string; email: string; phoneNumber: string; password: string }>({
-      query: ({name, email, phoneNumber, password }) => ({
-        url: `user/email/${email}`,
-        method: 'PUT',
-        body: { name, phoneNumber, password },
-      }),
-    }),
     
   }),
 });
@@ -78,6 +71,5 @@ export const {
   useUpdateUserStatusMutation, 
   useLoginUserMutation,
   useRegisterUserWithResetLinkMutation,
-  useRegisterUserMutation,
-  useUpdateUserMutation // Add this line to export the update user mutation hook
+  useRegisterUserMutation // Add this line to export the update user mutation hook
 } = userApi;
