@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { useUpdateUserMutation } from '../services/api'; 
 
 const UpdateUserForm: React.FC = () => {
   const navigate = useNavigate();
@@ -12,31 +12,21 @@ const UpdateUserForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
+  const [mutate] = useUpdateUserMutation();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     const urlParams = new URLSearchParams(location.search);
     const token = urlParams.get('token');
     
-    // If token is present in the URL, make the API call
     if (token) {
       setIsLoading(true);
       try {
-        // Make the API call using Axios
-        const response = await axios.put(
-          `http://localhost:4000/api/user/email/${email}`,
-          { name, email, phoneNumber, password },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-
-        // Optionally handle the response, e.g., show success message
+        console.log(token);
+        
+        const response = await mutate({ name, email, phoneNumber, password, token });
         console.log('User updated:', response.data);
-
-        // Redirect to home page after successful update
         navigate('/');
       } catch (error) {
         console.error('Error updating user:', error);
@@ -51,7 +41,7 @@ const UpdateUserForm: React.FC = () => {
 
   return (
     <div style={{ maxWidth: '400px', margin: 'auto', padding: '20px', border: '1px solid #ccc', borderRadius: '5px' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Register User</h2>
+      <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Update User</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '1rem' }}>
           <label htmlFor="name">Name:</label>
@@ -59,7 +49,7 @@ const UpdateUserForm: React.FC = () => {
             type="text"
             id="name"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value)} // Update name state onChange
             required
             style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '3px' }}
           />
@@ -70,7 +60,7 @@ const UpdateUserForm: React.FC = () => {
             type="text"
             id="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)} // Update email state onChange
             required
             style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '3px' }}
           />
@@ -81,7 +71,7 @@ const UpdateUserForm: React.FC = () => {
             type="text"
             id="phoneNumber"
             value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
+            onChange={(e) => setPhoneNumber(e.target.value)} // Update phoneNumber state onChange
             required
             style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '3px' }}
           />
@@ -92,7 +82,7 @@ const UpdateUserForm: React.FC = () => {
             type="password"
             id="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)} // Update password state onChange
             required
             style={{ width: '100%', padding: '0.5rem', border: '1px solid #ccc', borderRadius: '3px' }}
           />
