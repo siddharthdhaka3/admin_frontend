@@ -11,6 +11,7 @@ import Admin from "./pages/adminPage";
 import User from "./pages/userPage";
 import NewUser from "./pages/newUser";
 import  Protected  from "./layout/protected"
+import ForgotPassword from "./pages/forgotPassword";
 
 // };
 
@@ -41,6 +42,12 @@ const router = createBrowserRouter ([
     path: "/newUser",
     element: (
         <NewUser />
+    )
+  },
+  {
+    path: "/forgot-password",
+    element: (
+        <ForgotPassword />
     )
   }
   

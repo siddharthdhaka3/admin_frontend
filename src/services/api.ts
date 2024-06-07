@@ -75,6 +75,20 @@ export const userApi = createApi({
         body: { name, email, password, phoneNumber, token }
       }),
     }),
+    addUserByEmail: builder.mutation<void, { email: string }>({
+      query: ({ email }) => ({
+        url: 'user/forgot-password',
+        method: 'POST',
+        body: { email },
+      }),
+    }),
+    forgotPassword: builder.mutation<void, { password: string;  token: string }>({ // Add 'token' parameter
+      query: ({  password, token }) => ({
+        url: `user/link/reset-password`,
+        method: 'PUT',
+        body: { password, token }
+      }),
+    }),
   }),
   
 });
@@ -88,5 +102,7 @@ export const {
   useRegisterUserMutation,
   useResetPasswordMutation, 
   useUpdateUserStatusMutation,
-  useUpdateUserMutation// Add this line to export the update user mutation hook
+  useUpdateUserMutation,
+  useAddUserByEmailMutation,
+  useForgotPasswordMutation// Add this line to export the update user mutation hook
 } = userApi;
