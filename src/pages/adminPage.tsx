@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from "../store/store";
-import { RootState } from '../store/store';
-import { addUser, updateUserStatus, deleteUser } from '../store/userSlice'; 
-import axios from "axios";
+import React, { useEffect} from 'react';
+import { useAppDispatch} from "../store/store";
+import { addUser } from '../store/userSlice'; 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
@@ -35,9 +33,7 @@ const AdminPage: React.FC = () => {
   const dispatch = useAppDispatch();
 
   // Fetch users using the generated query hook
-  const { data: allUsers = [], isSuccess } = useGetAllUsersQuery();
-  console.log(allUsers);
-  
+  const { data: allUsers = [], isSuccess } = useGetAllUsersQuery();  
   // Automatically adds users to the Redux store when data changes
   useEffect(() => {
     if (isSuccess) {

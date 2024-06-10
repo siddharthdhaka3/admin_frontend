@@ -6,6 +6,7 @@ interface AuthState {
     refreshToken: string;
     isAuthenticated: boolean;
     isAdmin:boolean;
+    tokenExpiry:number;
   }
   
   // Define the initial state using that type
@@ -13,7 +14,8 @@ interface AuthState {
     accessToken: "",
     refreshToken: "",
     isAuthenticated: false,
-    isAdmin: false
+    isAdmin: false,
+    tokenExpiry: 0
   };
 
 
@@ -24,18 +26,20 @@ interface AuthState {
     reducers: {
       setTokens: (
         state,
-        action: PayloadAction<{ accessToken: string; refreshToken: string; isAuthenticated: boolean; isAdmin: boolean}>
+        action: PayloadAction<{ accessToken: string; refreshToken: string; isAuthenticated: boolean; isAdmin: boolean; tokenExpiry: number;}>
       ) => {
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = action.payload.isAuthenticated;
         state.isAdmin = action.payload.isAdmin;
+        state.tokenExpiry = action.payload.tokenExpiry;
       },
       resetTokens: (state) => {
         state.accessToken = "";
         state.refreshToken = "";
         state.isAuthenticated = false;
         state.isAdmin = false;
+        state.tokenExpiry = 0;
       },
     },
   });

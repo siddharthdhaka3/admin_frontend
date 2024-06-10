@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { RootState } from '../store/store';
-
+import { jwtDecode } from 'jwt-decode';
+import { setTokens } from '../store/authReducer';
 interface User {
   _id: string;
   name: string;
@@ -15,9 +16,13 @@ export const userApi = createApi({
     baseUrl: 'http://localhost:4000/api',
     prepareHeaders: (headers, { getState }) => {
       const accessToken = (getState() as RootState).auth.accessToken;
+      const refreshToken = (getState() as RootState).auth.refreshToken;
       if (accessToken) {
         headers.append('Authorization', `Bearer ${accessToken}`);
       }
+      // if(refreshToken){
+      //   headers.append('Authorization', `RefreshToken ${refreshToken}`)
+      // }
       return headers;
     },
   }),
@@ -25,7 +30,34 @@ export const userApi = createApi({
     // Existing endpoints...
     getAllUsers: builder.query<User[], void>({
       query: () => 'user/all',
-    }),
+      // Add interceptor only for getAllUsers
+      async onQueryStarted(arg, { dispatch, getState }) {
+        const accessToken = (getState() as RootState).auth.accessToken;
+        const refreshToken = (getState() as RootState).auth.refreshToken;
+
+        if (!accessToken || !refreshToken) {
+          // Token(s) are missing, handle accordingly
+          return;
+        }
+
+        // Check if access token is expired
+        const decodedToken:any = jwtDecode(accessToken) as { exp?: number };; // Assuming jwt is imported
+        const tokenExpiry = decodedToken.exp * 1000; // Expiry time in milliseconds
+
+        if (!tokenExpiry || Date.now() >= tokenExpiry) {
+          // Access token is expired, refresh it
+          try {
+            const { data } = await dispatch(userApi.endpoints.refreshTokens.initiate({ refreshToken }));
+        
+            if (data) {
+              dispatch(setTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken, isAdmin:data.user.isAdmin, isAuthenticated:true, tokenExpiry:0}));
+            }
+          } catch (error) {
+            // Handle error if refresh token request fails
+            console.error('Failed to refresh tokens:', error);
+          }
+        }
+    }}),
     deleteUser: builder.mutation<void, string>({
       query: (id) => ({
         url: `user/${id}`,
@@ -38,8 +70,44 @@ export const userApi = createApi({
         method: 'PUT',
         body: { blocked },
       }),
+
+      async onQueryStarted(arg, { dispatch, getState }) {
+        console.log("hello");
+        
+        const state = getState() as RootState;
+        const accessToken = (getState() as RootState).auth.accessToken;
+        const refreshToken = (getState() as RootState).auth.refreshToken;
+
+        if (!accessToken || !refreshToken) {
+          // Token(s) are missing, handle accordingly
+          return;
+        }
+
+        // Check if access token is expired
+        const decodedToken:any = jwtDecode(accessToken) as { exp?: number };; // Assuming jwt is imported
+        const tokenExpiry = decodedToken.exp * 1000; // Expiry time in milliseconds
+
+        if (!tokenExpiry || Date.now() >= tokenExpiry) {
+          // Access token is expired, refresh it
+          console.log("exp");
+          
+          try {
+            const { data } = await dispatch(userApi.endpoints.refreshTokens.initiate({ refreshToken }));
+            
+            if (data) {
+              const decodedToken2:any = jwtDecode(data.accessToken) as { exp?: number };; // Assuming jwt is imported
+              const tokenExpiry2 = decodedToken2.exp * 1000; // Expiry time in milliseconds
+              dispatch(setTokens({ accessToken: data.accessToken, refreshToken: data.refreshToken, isAdmin:data.user.isAdmin, isAuthenticated:true, tokenExpiry:tokenExpiry2}));
+            }
+          } catch (error) {
+            // Handle error if refresh token request fails
+            console.error('Failed to refresh tokens:', error);
+          }
+        }
+    }
+
     }),
-    loginUser: builder.mutation<{ accessToken: string; user: User }, { email: string; password: string }>({
+    loginUser: builder.mutation<{ accessToken: string; refreshToken:string; accessTokenExpiry:number; user: User }, { email: string; password: string }>({
       query: ({ email, password }) => ({
         url: 'user/login',
         method: 'POST',
@@ -89,6 +157,13 @@ export const userApi = createApi({
         body: { password, token }
       }),
     }),
+    refreshTokens: builder.mutation<{ accessToken: string; refreshToken: string; user:any;}, { refreshToken: string }>({
+      query: ({ refreshToken }) => ({
+        url: 'user/refresh',
+        method: 'POST',
+        body: { refreshToken },
+      }),
+    }),
   }),
   
 });
@@ -104,5 +179,6 @@ export const {
   useUpdateUserStatusMutation,
   useUpdateUserMutation,
   useAddUserByEmailMutation,
-  useForgotPasswordMutation// Add this line to export the update user mutation hook
+  useForgotPasswordMutation,
+  useRefreshTokensMutation// Add this line to export the update user mutation hook
 } = userApi;

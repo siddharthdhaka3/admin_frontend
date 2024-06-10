@@ -4,6 +4,23 @@ import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../store/store";
 import { setTokens } from "../store/authReducer";
 import { useLoginUserMutation, useAddUserByEmailMutation } from "../services/api"; // Import the hook for the new mutation
+import {jwtDecode} from 'jwt-decode';  
+
+
+function getTokenExpiry(token: string): number | null {
+  try {
+      const decodedToken: any = jwtDecode(token);
+      if (decodedToken && typeof decodedToken.exp === 'number') {
+          return decodedToken.exp;
+      } else {
+          console.error("Token does not contain an expiry date (exp claim).");
+          return null;
+      }
+  } catch (error) {
+      console.error("Error decoding token:", error);
+      return null;
+  }
+}
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -24,9 +41,10 @@ const Login: React.FC = () => {
       const accessToken = response.accessToken;
       dispatch(setTokens({
         accessToken: accessToken,
-        refreshToken: '',
+        refreshToken: response.refreshToken,
         isAuthenticated: true,
-        isAdmin: response.user.isAdmin
+        isAdmin: response.user.isAdmin,
+        tokenExpiry: response.accessTokenExpiry
       }));
 
       if(response.user.isAdmin) {
