@@ -16,7 +16,6 @@ const refreshTokenIfNeeded = async (dispatch: any, getState: any) => {
   const refreshToken = (getState() as RootState).auth.refreshToken;
 
   if (!accessToken || !refreshToken) {
-    // Token(s) are missing, handle accordingly
     return;
   }
 
@@ -64,7 +63,6 @@ export const userApi = createApi({
     // Existing endpoints...
     getAllUsers: builder.query<User[], void>({
       query: () => 'user/all',
-      // Add interceptor only for getAllUsers
       async onQueryStarted(arg, { dispatch, getState }) {
         await refreshTokenIfNeeded(dispatch, getState);
       },  
