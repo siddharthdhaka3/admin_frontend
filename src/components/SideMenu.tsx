@@ -10,6 +10,7 @@ import GridViewIcon from '@mui/icons-material/GridView'; // Import the GridViewI
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import Log1 from '../assets/logoIcon.png';
 
 const drawerWidth = 240;
 
@@ -25,14 +26,15 @@ const useStyles = makeStyles((theme: Theme) =>
     drawerPaper: {
       width: drawerWidth,
       backgroundColor: '#fff',
+      border: '1px solid #ccc', // Add border to the drawer
+      borderTopRightRadius: '30px', // Curved top-right corner
     },
     logo: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      height: 64,
+      height: 100, // Increase the height of the logo container
       backgroundColor: '#fff',
-      borderBottom: '1px solid #ccc',
     },
     logoText: {
       color: 'rgba(27, 68, 88, 0.7)',
@@ -46,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) =>
     listItem: {
       display: 'flex',
       alignItems: 'center',
-      padding: 0, // Remove padding from list item
+      padding: `${theme.spacing(2)}px 0`, // Increase padding top and bottom of list item
     },
     icon: {
       color: 'rgba(27, 68, 88, 0.7)', // Set the color of the icons to #1B4458 with 70% opacity
@@ -56,7 +58,7 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: theme.spacing(1), // Add margin to the right of the icon
     },
     logoImage: {
-      width: 40, // Set the width of the logo image
+      width: 80, // Increase the width of the logo image
       height: 'auto', // Maintain aspect ratio
     },
   }),
@@ -77,12 +79,12 @@ const SideMenu: React.FC<SideMenuProps> = (props) => {
         classes={{
           paper: classes.drawerPaper,
         }}
-        anchor="left"
+        // anchor="left"
       >
         <div className={classes.logo}>
           {/* Use img tag with src attribute pointing to the logo image */}
           <Typography variant="h6" className={classes.logoText}>
-            <img src="https://github.com/siddharthdhaka3/admin_frontend/blob/main/public/logoIcon.png" alt="Logo" className={classes.logoImage} />
+            <img src={Log1} alt="Logo" className={classes.logoImage} />
           </Typography>
         </div>
         <List>
@@ -109,7 +111,7 @@ const SideMenu: React.FC<SideMenuProps> = (props) => {
               <LogoutIcon />
             </ListItemIcon>
             <ListItemText primary="Logout" classes={{ primary: classes.listItemText }} />
-          </ListItem>
+          </ListItem> 
         </List>
       </Drawer>
       {/* Content goes here */}

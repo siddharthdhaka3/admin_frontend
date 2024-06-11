@@ -28,34 +28,32 @@ interface UserTableProps {}
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     tableContainer: {
-      borderRadius: theme.shape.borderRadius,
+      borderRadius: 20, // Set the border radius to 10px
       overflow: 'hidden',
       boxShadow: theme.shadows[1],
-      marginTop: theme.spacing(2),
-      margin: 0, // Remove the margin
+      padding: `${theme.spacing(2)}px ${theme.spacing(8)}px`,
+      backgroundColor: 'rgba(178, 178, 178, 0.5)', // Grey background color with 0.5 opacity
     },
     table: {
       minWidth: 650,
       borderCollapse: 'separate',
       borderSpacing: 0,
+      backgroundColor: '#fff', // White background for the table
+      borderRadius: 10, // Ensure the table itself also has rounded corners
     },
     headerCell: {
       backgroundColor: '#FFFFFF',
       fontWeight: 'bold',
       color: '#000',
-      '&:first-child': {
-        borderTopLeftRadius: theme.shape.borderRadius,
-      },
-      '&:last-child': {
-        borderTopRightRadius: theme.shape.borderRadius,
-      },
+      borderTopLeftRadius: 10, // Set the border radius of the header cells
+      borderTopRightRadius: 10,
     },
     tableRow: {
       '&:last-child td:first-child': {
-        borderBottomLeftRadius: theme.shape.borderRadius,
+        borderBottomLeftRadius: 10, // Set the border radius of the last row's first cell
       },
       '&:last-child td:last-child': {
-        borderBottomRightRadius: theme.shape.borderRadius,
+        borderBottomRightRadius: 10, // Set the border radius of the last row's last cell
       },
       '& td': {
         borderBottom: 'none',
@@ -69,6 +67,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   }),
 );
+
 const UserTable: React.FC<UserTableProps> = () => {
   const users = useAppSelector((state: RootState) => state.user.users);
   const classes = useStyles();
@@ -120,7 +119,6 @@ const UserTable: React.FC<UserTableProps> = () => {
 
   return (
     <>
-      {/* <Typography variant="h5" className={classes.title}>All Users:</Typography> */}
       <div className={classes.tableContainer}>
         <Table className={classes.table} aria-label="users table">
           <TableHead>
