@@ -121,9 +121,6 @@ export const userApi = createApi({
         method: 'POST',
         body: { Password },
       }),
-      async onQueryStarted(arg, { dispatch, getState }) {
-        await refreshTokenIfNeeded(dispatch, getState);
-      },
     }),
     updateUser: builder.mutation<void, { name: string; email: string; password: string; phoneNumber: string; token: string }>({ // Add 'token' parameter
       query: ({ name, email, password, phoneNumber, token }) => ({
