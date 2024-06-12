@@ -44,7 +44,7 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '200px',
       height: '51px',
       top: '17px',
-      left: '950px',
+      left: '984px',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: '10px',

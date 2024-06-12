@@ -40,6 +40,9 @@ const useStyles = makeStyles((theme: Theme) =>
       borderSpacing: 0,
       backgroundColor: '#fff',
       borderRadius: 10,
+      paddingLeft: '30px',
+      paddingRight: '30px',
+
     },
     headerCell: {
       backgroundColor: '#FFFFFF',
@@ -50,7 +53,8 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 500,
       fontSize: '14px',
       lineHeight: '18px',
-      paddingLeft: '30px',
+      textAlign:'left',
+      paddingLeft: '0px',
       paddingTop:'25px',
       paddingBottom:'25px',
 
@@ -78,7 +82,7 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 400,
       lineHeight: '16.94px',
       textAlign: 'left',
-      paddingLeft: '30px',
+      paddingLeft: '0px',
       paddingTop: '12px',
     },
   }),
