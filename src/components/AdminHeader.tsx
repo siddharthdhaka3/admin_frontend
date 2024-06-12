@@ -4,13 +4,13 @@ import { makeStyles, Theme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme: Theme) => ({
   header: {
-    marginBottom: theme.spacing(2),
+    marginBottom: '36px',
     fontSize: '2rem',
     fontWeight: 'bold',
     fontFamily: 'Red Hat Display', // Set font family to Red Hat Display
     color: '#1B4458', // Set text color to #1B4458
-    marginLeft: theme.spacing(6), 
-    marginTop: theme.spacing(4), // Add margin to the left
+    marginLeft: '38px', 
+    marginTop: '36px', // Add margin to the left
     // Add margin to the left
   },
   mainText: {

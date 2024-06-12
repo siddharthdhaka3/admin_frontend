@@ -3,61 +3,78 @@ import { useAppDispatch } from "../store/store";
 import { addUser } from '../store/userSlice'; 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import Grid from '@material-ui/core/Grid';
 import AdminHeader from '../components/AdminHeader';
-import AddUserForm from '../components/AddUserForm';
 import UserTable from '../components/UserTable';
-import SideMenu from '../components/SideMenu'; // Import the SideMenu component
+import SideMenu from '../components/SideMenu';
 import { useGetAllUsersQuery } from '../services/api';
 import Footer from '../components/AdminFooter';
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      display: 'flex', // Use flex display to arrange side menu and content
-      margin: 0, // Remove default margin
+      minHeight: '100vh',
+      width: "100%",
+      display: 'flex',
+      margin: 0,
     },
     content: {
-      flexGrow: 1, // Allow content to take remaining space
-      // padding: theme.spacing(2),
-      backgroundColor: 'rgba(178, 178, 178, 0.5)', // Set the background color of the content area with 50% opacity
+      flexGrow: 1,
+      backgroundColor: 'rgba(178, 178, 178, 0.5)',
       minHeight: '100vh',
-      position: 'relative', // Ensure position is relative for positioning absolute children
+      position: 'relative',
     },
     formContainer: {
       marginBottom: theme.spacing(2),
-      margin: 0, // Remove margin
+      margin: 0,
     },
     tableContainer: {
-      backgroundColor: '#fff', // Set the background color of the table container to white
-      borderRadius: theme.spacing(5), // Apply rounded corners to the table container
-      overflow: 'hidden', // Ensure overflow content within the table container is hidden
-      border: 'none', // Remove border
+      backgroundColor: '#fff',
+      borderRadius: theme.spacing(5),
+      overflow: 'hidden',
+      border: 'none',
     },
     emptyDiv: {
-      backgroundColor:'white',
+      backgroundColor: 'white',
       width: '100%',
       height: '86px',
-      position: 'relative', // Ensure position is relative for positioning absolute children
+      position: 'relative',
     },
     userDetails: {
-      position: 'absolute', // Position the user details absolutely
-      top: '50%', // Align to the vertical center
-      right: '10px', // Align to the very right side with some spacing
-      transform: 'translateY(-50%)', // Center vertically
-      display: 'flex', // Use flexbox layout
-      flexDirection: 'column', // Stack user details vertically
-      alignItems: 'flex-end', // Align user details to the right
+      position: 'absolute',
+      width: '200px',
+      height: '51px',
+      top: '17px',
+      left: '950px',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: '10px',
+      alignItems: 'flex-start',
+      padding: theme.spacing(1),
+      backgroundColor: 'white',
+      borderRadius: '8px',
+    },
+    userName: {
+      fontFamily: 'Inter, sans-serif',
+      fontWeight: 700,
+      fontSize: '12px',
+      lineHeight: '13px',
+    },
+    userEmail: {
+      fontFamily: 'Inter, sans-serif',
+      fontWeight: 300,
+      fontSize: '12px',
+      lineHeight: '20px',
     },
     adminHeaderContainer: {
       marginTop: '10px',
-      marginLeft: '10px', // Add margin to the top of admin header
+      marginLeft: '10px',
     },
-    footer:{
+    footer: {
       position: 'absolute',
-      left:0,
-      bottom:0,
-      right:0,
-      marginTop: 'auto', // Push footer to the bottom
+      left: 0,
+      bottom: 0,
+      right: 0,
+      marginTop: 'auto',
       backgroundColor: '#fff',
       flexShrink: 0,
     },
@@ -75,9 +92,8 @@ const AdminPage: React.FC = () => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
 
-  // Fetch users using the generated query hook
-  const { data: allUsers = [], isSuccess } = useGetAllUsersQuery();  
-  // Automatically adds users to the Redux store when data changes
+  const { data: allUsers = [], isSuccess } = useGetAllUsersQuery();
+
   useEffect(() => {
     if (isSuccess) {
       allUsers.forEach(user => {
@@ -85,8 +101,7 @@ const AdminPage: React.FC = () => {
       });
     }
   }, [dispatch, allUsers, isSuccess]);
-  
-  // Sample logged-in user data
+
   const loggedInUser = {
     name: "John Doe",
     email: "john.doe@example.com",
@@ -94,14 +109,12 @@ const AdminPage: React.FC = () => {
 
   return (
     <div className={classes.root}>
-      {/* Render the SideMenu component */}
       <SideMenu />
       <div className={classes.content}>
         <div className={classes.emptyDiv}>
-          {/* Display logged-in user details */}
           <div className={classes.userDetails}>
-            <Typography variant="body1">{loggedInUser.name}</Typography>
-            <Typography variant="body2">{loggedInUser.email}</Typography>
+            <Typography variant="body1" className={classes.userName}>{loggedInUser.name}</Typography>
+            <Typography variant="body2" className={classes.userEmail}>{loggedInUser.email}</Typography>
           </div>
         </div>
         <div className={classes.adminHeaderContainer}>
@@ -111,10 +124,11 @@ const AdminPage: React.FC = () => {
           <UserTable />
         </div>
         <div className={classes.footer}>
-        <Footer currentPage={1} totalPages={2} totalRecords={4} currentPageRecords={4} />
-      </div>
+          <Footer currentPage={1} totalPages={2} totalRecords={4} currentPageRecords={4} />
+        </div>
       </div>
     </div>
   );
-} 
+}
+
 export default AdminPage;

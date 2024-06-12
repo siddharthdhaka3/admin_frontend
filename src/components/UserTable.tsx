@@ -28,32 +28,39 @@ interface UserTableProps {}
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     tableContainer: {
-      borderRadius: 20, // Set the border radius to 10px
+      borderRadius: 20,
       overflow: 'hidden',
       boxShadow: theme.shadows[1],
-      padding: `${theme.spacing(2)}px ${theme.spacing(8)}px`,
-      backgroundColor: 'rgba(178, 178, 178, 0.5)', // Grey background color with 0.5 opacity
+      paddingLeft: '40px',
+      backgroundColor: 'rgba(178, 178, 178, 0.5)',
     },
     table: {
-      minWidth: 650,
+      width: '1085px',
       borderCollapse: 'separate',
       borderSpacing: 0,
-      backgroundColor: '#fff', // White background for the table
-      borderRadius: 10, // Ensure the table itself also has rounded corners
+      backgroundColor: '#fff',
+      borderRadius: 10,
     },
     headerCell: {
       backgroundColor: '#FFFFFF',
-      fontWeight: 'bold',
-      color: '#000',
-      borderTopLeftRadius: 10, // Set the border radius of the header cells
+      color: '#667085',
+      borderTopLeftRadius: 10,
       borderTopRightRadius: 10,
+      fontFamily: 'Inter, sans-serif',
+      fontWeight: 500,
+      fontSize: '14px',
+      lineHeight: '18px',
+      paddingLeft: '30px',
+      paddingTop:'25px',
+      paddingBottom:'25px',
+
     },
     tableRow: {
       '&:last-child td:first-child': {
-        borderBottomLeftRadius: 10, // Set the border radius of the last row's first cell
+        borderBottomLeftRadius: 10,
       },
       '&:last-child td:last-child': {
-        borderBottomRightRadius: 10, // Set the border radius of the last row's last cell
+        borderBottomRightRadius: 10,
       },
       '& td': {
         borderBottom: 'none',
@@ -64,6 +71,15 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     title: {
       marginBottom: theme.spacing(2),
+    },
+    tableCellText: {
+      fontFamily: 'Inter, sans-serif',
+      fontSize: '14px',
+      fontWeight: 400,
+      lineHeight: '16.94px',
+      textAlign: 'left',
+      paddingLeft: '30px',
+      paddingTop: '12px',
     },
   }),
 );
@@ -131,9 +147,9 @@ const UserTable: React.FC<UserTableProps> = () => {
           <TableBody>
             {users.map((user) => (
               <TableRow key={user._id} className={classes.tableRow}>
-                <TableCell>{user.name}</TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
+                <TableCell className={classes.tableCellText}>{user.name}</TableCell>
+                <TableCell className={classes.tableCellText}>{user.email}</TableCell>
+                <TableCell className={classes.tableCellText}>
                   <IconButton
                     aria-controls="action-menu"
                     aria-haspopup="true"

@@ -10,9 +10,9 @@ import GridViewIcon from '@mui/icons-material/GridView'; // Import the GridViewI
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
-import Log1 from '../assets/logoIcon.png';
+import Log1 from '../assets/newLogo.png';
 
-const drawerWidth = 240;
+const drawerWidth = 250;
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -23,44 +23,66 @@ const useStyles = makeStyles((theme: Theme) =>
       width: drawerWidth,
       flexShrink: 0,
     },
+
     drawerPaper: {
       width: drawerWidth,
       backgroundColor: '#fff',
-      border: '1px solid #ccc', // Add border to the drawer
+      margin:'8px',
+      //border: '1px solid #ccc', // Add border to the drawer
       borderTopRightRadius: '30px', // Curved top-right corner
     },
     logo: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      height: 100, // Increase the height of the logo container
+      // height: 100, // Increase the height of the logo container
       backgroundColor: '#fff',
+      paddingTop:'30px',
+      // paddingLeft:'86px',
     },
     logoText: {
       color: 'rgba(27, 68, 88, 0.7)',
-      fontWeight: 'bold',
-      fontSize: '1.5rem', // Increase font size of top icon
+     // Increase font size of top icon
     },
     listItemText: {
-      // textAlign: 'center',
+      //textAlign: 'center',
       color: 'rgba(27, 68, 88, 0.7)',
+      paddingTop:'15px',
+      paddingBottom:'15px',
+      paddingLeft:'12px',
+      fontFamily: 'Red Hat Display, sans-serif', // Set the font family
+      //fontWeight: 500, // Set the font weight
+      fontSize: '16px', // Set the font size
+      lineHeight: '21.17px', // Set the line height
+      letterSpacing: '0.02em', 
+      
     },
     listItem: {
+      paddingTop: '30px', // Add top padding of 28px
+
       display: 'flex',
       alignItems: 'center',
-      padding: `${theme.spacing(2)}px 0`, // Increase padding top and bottom of list item
+      padding: 0, // Increase padding top and bottom of list item
+      paddingLeft:'35px',
+      height:'56px',
+      width:'248px',
+      
     },
+    
     icon: {
       color: 'rgba(27, 68, 88, 0.7)', // Set the color of the icons to #1B4458 with 70% opacity
-      minWidth: 40, // Set a minimum width for the icon container
+      minWidth: 30,
+      minHeight:30, // Set a minimum width for the icon container
       display: 'flex',
       justifyContent: 'center',
-      marginRight: theme.spacing(1), // Add margin to the right of the icon
+      // marginRight: theme.spacing(1), // Add margin to the right of the icon
     },
     logoImage: {
-      width: 80, // Increase the width of the logo image
-      height: 'auto', // Maintain aspect ratio
+      
+      width: '77px',
+      height:'75px', // Increase the width of the logo image
     },
+    
   }),
 );
 
@@ -90,28 +112,28 @@ const SideMenu: React.FC<SideMenuProps> = (props) => {
         <List>
           <ListItem button dense className={classes.listItem}>
             <ListItemIcon className={classes.icon}>
-              <GridViewIcon />
+              <GridViewIcon fontSize='large'/>
             </ListItemIcon>
             <ListItemText primary="Dashboard" classes={{ primary: classes.listItemText }} />
           </ListItem>
           <ListItem button dense className={classes.listItem}>
             <ListItemIcon className={classes.icon}>
-              <PersonAddAltIcon />
+              <PersonAddAltIcon fontSize='large' />
             </ListItemIcon>
             <ListItemText primary="User" classes={{ primary: classes.listItemText }} />
           </ListItem>
           <ListItem button dense className={classes.listItem}>
             <ListItemIcon className={classes.icon}>
-              <SettingsIcon />
+              <SettingsIcon fontSize='large'/>
             </ListItemIcon>
             <ListItemText primary="Settings" classes={{ primary: classes.listItemText }} />
           </ListItem>
           <ListItem button dense className={classes.listItem}>
             <ListItemIcon className={classes.icon}>
-              <LogoutIcon />
+              <LogoutIcon fontSize='large'/>
             </ListItemIcon>
             <ListItemText primary="Logout" classes={{ primary: classes.listItemText }} />
-          </ListItem> 
+          </ListItem>   
         </List>
       </Drawer>
       {/* Content goes here */}
