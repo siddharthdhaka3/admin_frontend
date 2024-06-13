@@ -1,38 +1,38 @@
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button, Container } from "@mui/material";
+import { useForm, Controller } from "react-hook-form";
 import { useForgotPasswordMutation } from "../services/api"; // Import the hook for the new mutation
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
+
+interface FormValues {
+  password: string;
+  confirmPassword: string;
+}
 
 const ForgotPassword: React.FC = () => {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const { control, handleSubmit, formState: { errors } } = useForm<FormValues>();
   const [responseMessage, setResponseMessage] = useState("");
   const [forgotPassword] = useForgotPasswordMutation(); // Initialize the hook for the new mutation
   const navigate = useNavigate(); // Hook for navigation
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormValues) => {
+    const { password, confirmPassword } = data;
 
     try {
-      // Check if passwords match
       if (password !== confirmPassword) {
         setResponseMessage("Passwords do not match.");
         return;
       }
 
-      // Retrieve token from URL
       const urlParams = new URLSearchParams(window.location.search);
       const token:any = urlParams.get('token');
-
-      // Call forgotPassword mutation with password and token
       const response = await forgotPassword({ password, token });
 
-      // Handle response
-      if (response.error) {
-        setResponseMessage("error");
+      if ('error' in response) {
+        setResponseMessage("Error resetting password.");
       } else {
         setResponseMessage("Password reset successfully!");
-        navigate("/")
+        navigate("/");
       }
     } catch (error) {
       console.error("Error resetting password:", error);
@@ -46,29 +46,43 @@ const ForgotPassword: React.FC = () => {
         <Typography variant="h2" align="center" gutterBottom>
           Forgot Password
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Box display="flex" flexDirection="column" alignItems="center">
-            <TextField
-              label="New Password"
-              variant="outlined"
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              fullWidth
-              style={{ marginBottom: '16px' }}
+            <Controller
+              name="password"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Password is required" }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="New Password"
+                  variant="outlined"
+                  type="password"
+                  fullWidth
+                  error={!!errors.password}
+                  helperText={errors.password ? errors.password.message : ""}
+                  style={{ marginBottom: '16px' }}
+                />
+              )}
             />
-            <TextField
-              label="Confirm New Password"
-              variant="outlined"
-              id="confirm-password"
-              type="password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-              fullWidth
-              style={{ marginBottom: '16px' }}
+            <Controller
+              name="confirmPassword"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Confirm password is required" }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Confirm New Password"
+                  variant="outlined"
+                  type="password"
+                  fullWidth
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword ? errors.confirmPassword.message : ""}
+                  style={{ marginBottom: '16px' }}
+                />
+              )}
             />
             <Button type="submit" variant="contained" color="primary">
               Submit

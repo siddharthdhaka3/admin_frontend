@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { useAppDispatch } from "../store/store";
+import { useState } from 'react';
+import { useAppDispatch, useAppSelector } from "../store/store";
 import { addUser } from '../store/userSlice'; 
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -8,7 +9,8 @@ import UserTable from '../components/UserTable';
 import SideMenu from '../components/SideMenu';
 import { useGetAllUsersQuery } from '../services/api';
 import Footer from '../components/AdminFooter';
-
+import { jwtDecode } from 'jwt-decode';
+import { RootState } from '../store/store';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -88,13 +90,19 @@ interface User {
   blocked: boolean;
 }
 
+
+
+
+
 const AdminPage: React.FC = () => {
   const classes = useStyles();
   const dispatch = useAppDispatch();
 
-  const { data: allUsers = [], isSuccess } = useGetAllUsersQuery();
+  const  { data: allUsers = [], isSuccess } = useGetAllUsersQuery();
 
-  useEffect(() => {
+
+  useEffect (() => {
+    // GetAll();
     if (isSuccess) {
       allUsers.forEach(user => {
         dispatch(addUser(user));
@@ -102,9 +110,12 @@ const AdminPage: React.FC = () => {
     }
   }, [dispatch, allUsers, isSuccess]);
 
+  const currentName = useAppSelector((state: RootState)=>state.currentUser.name);
+  const currentEmail = useAppSelector((state: RootState)=>state.currentUser.email);
+  
   const loggedInUser = {
-    name: "John Doe",
-    email: "john.doe@example.com",
+    name: currentName,
+    email: currentEmail,
   };
 
   return (

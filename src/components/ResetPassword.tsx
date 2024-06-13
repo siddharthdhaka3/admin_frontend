@@ -1,78 +1,107 @@
-import React, { useState } from "react";
+import React from "react";
 import { Box, Typography, TextField, Button, Container } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
 import { useResetPasswordMutation } from "../services/api"; 
-import { useNavigate } from "react-router-dom"; 
+
+interface FormValues {
+  newPassword: string;
+  confirmPassword: string;
+}
+
 const ResetPassword: React.FC = () => {
-    const [currentPassword, setCurrentPassword] = useState("");
-    const [Password, setPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [isError, setIsError] = useState(false);
-    const navigate = useNavigate(); // Hook for navigation
+  const { control, handleSubmit, formState: { errors }, getValues } = useForm<FormValues>();
+  const navigate = useNavigate();
+  const [mutate, { isLoading: isResetting, isError: resetError }] = useResetPasswordMutation();
 
-    const [mutate, { isLoading: isResetting, isError: resetError }] = useResetPasswordMutation();
-  
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-      setIsError(false);
-      setIsLoading(true);
-  
-      try {
-        // Call the reset password API using the mutate function
-        await mutate({ Password });
-        navigate("/");
-
+  const onSubmit = async (data: FormValues) => {
+    try {
+      await mutate({ Password: data.newPassword });
+      navigate("/");
     } catch (error) {
-        console.error("Error resetting password:", error);
-        setIsError(true);
-        // Optionally provide error feedback to the user
-      } finally {
-        setIsLoading(false);
-      }
-    };
-  
-    return (
-      <Container maxWidth="sm">
-        <Box mt={4}>
-          <Typography variant="h2" align="center" gutterBottom>
-            Reset Password
-          </Typography>
-          <form onSubmit={handleSubmit}>
-            <Box display="flex" flexDirection="column" alignItems="center">
-              <TextField
-                label="Current Password"
-                variant="outlined"
-                id="currentPassword"
-                type="password"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                required
-                fullWidth
-                style={{ marginBottom: '16px' }}
-              />
-              <TextField
-                label="New Password"
-                variant="outlined"
-                id="newPassword"
-                type="password"
-                value={Password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                fullWidth
-                style={{ marginBottom: '16px' }}
-              />
-              <Button type="submit" variant="contained" color="primary" disabled={isLoading || isResetting}>
-                {isResetting ? "Resetting..." : "Reset Password"}
-              </Button>
-              {isError || resetError && (
-                <Typography variant="body1" color="error" style={{ marginTop: '16px' }}>
-                  Error resetting password. Please try again.
-                </Typography>
-              )}
-            </Box>
-          </form>
-        </Box>
-      </Container>
-    );
+      console.error("Error resetting password:", error);
+    }
   };
-  
-  export default ResetPassword;
+
+  const isStrongPassword = (password: string) => {
+    const criteria = {
+      minLength: 3,
+      minLowercase: 1,
+      minUppercase: 1,
+      minNumbers: 1,
+      minSymbols: 1,
+    };
+    const regex = new RegExp(`^(?=.*[a-z]{${criteria.minLowercase},})(?=.*[A-Z]{${criteria.minUppercase},})(?=.*\\d{${criteria.minNumbers},})(?=.*[!@#$%^&*(),.?":{}|<>]{${criteria.minSymbols},}).{${criteria.minLength},}$`);
+    return regex.test(password);
+  };
+
+  return (
+    <Container maxWidth="sm">
+      <Box mt={4}>
+        <Typography variant="h2" align="center" gutterBottom>
+          Reset Password
+        </Typography>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Box display="flex" flexDirection="column" alignItems="center">
+            <Controller
+              name="newPassword"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: "New Password is required",
+                validate: {
+                  isStrongPassword: (value) => isStrongPassword(value) || "Password must be at least 3 characters long, include 1 lowercase letter, 1 uppercase letter, 1 number, and 1 symbol",
+                }
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="New Password"
+                  variant="outlined"
+                  type="password"
+                  fullWidth
+                  error={!!errors.newPassword}
+                  helperText={errors.newPassword ? errors.newPassword.message : ""}
+                  style={{ marginBottom: '16px' }}
+                />
+              )}
+            />
+            <Controller
+              name="confirmPassword"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: "Please confirm your password",
+                validate: {
+                  matchesNewPassword: (value) => value === getValues("newPassword") || "Passwords do not match",
+                }
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Confirm Password"
+                  variant="outlined"
+                  type="password"
+                  fullWidth
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword ? errors.confirmPassword.message : ""}
+                  style={{ marginBottom: '16px' }}
+                />
+              )}
+            />
+            <Button type="submit" variant="contained" color="primary" disabled={isResetting}>
+              {isResetting ? "Resetting..." : "Reset Password"}
+            </Button>
+            {(errors.newPassword || errors.confirmPassword || resetError) && (
+              <Typography variant="body1" color="error" style={{ marginTop: '16px' }}>
+                Error resetting password. Please try again.
+              </Typography>
+            )}
+          </Box>
+        </form>
+      </Box>
+    </Container>
+  );
+};
+
+export default ResetPassword;

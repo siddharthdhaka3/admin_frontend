@@ -12,6 +12,7 @@ import User from "./pages/userPage";
 import NewUser from "./pages/newUser";
 import  Protected  from "./layout/protected"
 import ForgotPassword from "./pages/forgotPassword";
+import AddUserForm from "./components/AddUserForm";
 
 // };
 
@@ -48,6 +49,14 @@ const router = createBrowserRouter ([
     path: "/forgot-password",
     element: (
         <ForgotPassword />
+    )
+  },
+  {
+    path: "/add-user",
+    element: (
+      <Protected auth = {true}>
+        <AddUserForm />
+      </Protected>
     )
   }
   

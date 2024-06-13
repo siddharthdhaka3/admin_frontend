@@ -13,18 +13,15 @@ const AddUserForm: React.FC = () => {
   };
 
   
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async(event: React.FormEvent) => {
     event.preventDefault();
-    registerUserWithResetLink({ email})
-      .unwrap()
-      .then((data) => {
-        // Handle successful registration
-        console.log('User registered:', data);
-      })
-      .catch((error) => {
-        // Handle registration error
-        console.error('Error registering user:', error);
-      });
+    try{
+      const data = await registerUserWithResetLink({email}).unwrap();
+      console.log("user registered");
+    }catch(error){
+      console.log("error registering user", error);
+      
+    }
     setEmail('');
   };
 

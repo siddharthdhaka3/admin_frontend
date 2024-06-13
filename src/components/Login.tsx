@@ -1,30 +1,19 @@
 import React, { useState } from "react";
 import { Box, Typography, TextField, Button, Container } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useForm, Controller } from "react-hook-form";
 import { useAppDispatch } from "../store/store";
 import { setTokens } from "../store/authReducer";
+import { setCurrentUser } from "../store/currentUserSlice";
 import { useLoginUserMutation, useAddUserByEmailMutation } from "../services/api"; // Import the hook for the new mutation
-import {jwtDecode} from 'jwt-decode';  
 
-
-function getTokenExpiry(token: string): number | null {
-  try {
-      const decodedToken: any = jwtDecode(token);
-      if (decodedToken && typeof decodedToken.exp === 'number') {
-          return decodedToken.exp;
-      } else {
-          console.error("Token does not contain an expiry date (exp claim).");
-          return null;
-      }
-  } catch (error) {
-      console.error("Error decoding token:", error);
-      return null;
-  }
+interface FormValues {
+  email: string;
+  password: string;
 }
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { control, handleSubmit, watch, formState: { errors } } = useForm<FormValues>();
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -32,22 +21,39 @@ const Login: React.FC = () => {
   const [addUserByEmail, { isLoading: isForgotPasswordLoading }] = useAddUserByEmailMutation(); // Initialize the hook for the new mutation
   const [forgotPasswordResponse, setForgotPasswordResponse] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormValues) => {
+    const { email, password } = data;
 
     try {
       const response = await loginUser({ email, password }).unwrap();
+      console.log(response);
+      
+      dispatch(
+        setTokens({
+          accessToken: response.accessToken,
+          refreshToken: response.refreshToken,
+          isAuthenticated: true,
+          isAdmin: response.user.isAdmin,
+          tokenExpiry: response.accessTokenExpiry,
+        }),
+        setCurrentUser({
+          name: response.user.name,
+          email: response.user.email,
+        }),
+        
+      );
 
-      const accessToken = response.accessToken;
-      dispatch(setTokens({
-        accessToken: accessToken,
-        refreshToken: response.refreshToken,
-        isAuthenticated: true,
-        isAdmin: response.user.isAdmin,
-        tokenExpiry: response.accessTokenExpiry
-      }));
+      dispatch(
+        setCurrentUser({
+          name: response.user.name,
+          email: response.user.email,
+        })
+      );
 
-      if(response.user.isAdmin) {
+      console.log(response.user.name);
+      
+
+      if (response.user.isAdmin) {
         navigate("/admin");
       } else {
         navigate("/user");
@@ -60,8 +66,8 @@ const Login: React.FC = () => {
 
   const handleForgotPasswordClick = async () => {
     try {
-      const response = await addUserByEmail({ email }); // Call the addUserByEmail mutation with the email
-      if (response.error) {
+      const response = await addUserByEmail({ email: watch('email') }); // Call the addUserByEmail mutation with the email from the form
+      if ("error" in response) {
         setForgotPasswordResponse("The email doesn't exist");
       } else {
         setForgotPasswordResponse("Reset password link sent");
@@ -78,29 +84,43 @@ const Login: React.FC = () => {
         <Typography variant="h2" align="center" gutterBottom>
           Login
         </Typography>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Box display="flex" flexDirection="column" alignItems="center">
-            <TextField
-              label="Email"
-              variant="outlined"
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              fullWidth
-              style={{ marginBottom: '16px' }}
+            <Controller
+              name="email"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Email is required" }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Email"
+                  variant="outlined"
+                  type="email"
+                  fullWidth
+                  error={!!errors.email}
+                  helperText={errors.email ? errors.email.message : ""}
+                  style={{ marginBottom: "16px" }}
+                />
+              )}
             />
-            <TextField
-              label="Password"
-              variant="outlined"
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              fullWidth
-              style={{ marginBottom: '16px' }}
+            <Controller
+              name="password"
+              control={control}
+              defaultValue=""
+              rules={{ required: "Password is required" }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Password"
+                  variant="outlined"
+                  type="password"
+                  fullWidth
+                  error={!!errors.password}
+                  helperText={errors.password ? errors.password.message : ""}
+                  style={{ marginBottom: "16px" }}
+                />
+              )}
             />
             <Button type="submit" variant="contained" color="primary" disabled={isLoading}>
               {isLoading ? "Logging in..." : "Login"}

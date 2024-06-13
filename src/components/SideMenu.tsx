@@ -10,6 +10,7 @@ import GridViewIcon from '@mui/icons-material/GridView'; // Import the GridViewI
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { Link } from 'react-router-dom';
 import Log1 from '../assets/newLogo.png';
 
 const drawerWidth = 250;
@@ -23,67 +24,56 @@ const useStyles = makeStyles((theme: Theme) =>
       width: drawerWidth,
       flexShrink: 0,
     },
-
     drawerPaper: {
       width: drawerWidth,
       backgroundColor: '#fff',
-      margin:'8px',
-      //border: '1px solid #ccc', // Add border to the drawer
+      margin: '8px',
       borderTopRightRadius: '30px', // Curved top-right corner
     },
     logo: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      // height: 100, // Increase the height of the logo container
       backgroundColor: '#fff',
-      paddingTop:'30px',
-      // paddingLeft:'86px',
+      paddingTop: '30px',
     },
     logoText: {
       color: 'rgba(27, 68, 88, 0.7)',
-     // Increase font size of top icon
     },
     listItemText: {
-      //textAlign: 'center',
       color: 'rgba(27, 68, 88, 0.7)',
-      paddingTop:'15px',
-      paddingBottom:'15px',
-      paddingLeft:'12px',
-      fontFamily: 'Red Hat Display, sans-serif', // Set the font family
-      //fontWeight: 500, // Set the font weight
-      fontSize: '16px', // Set the font size
-      lineHeight: '21.17px', // Set the line height
-      letterSpacing: '0.02em', 
-      
+      paddingTop: '15px',
+      paddingBottom: '15px',
+      paddingLeft: '12px',
+      fontFamily: 'Red Hat Display, sans-serif',
+      fontSize: '16px',
+      lineHeight: '21.17px',
+      letterSpacing: '0.02em',
     },
     listItem: {
-      paddingTop: '30px', // Add top padding of 28px
-
+      paddingTop: '30px',
       display: 'flex',
       alignItems: 'center',
-      padding: 0, // Increase padding top and bottom of list item
-      paddingLeft:'35px',
-      height:'56px',
-      width:'248px',
-      
+      padding: 0,
+      paddingLeft: '35px',
+      height: '56px',
+      width: '248px',
     },
-    
     icon: {
-      color: 'rgba(27, 68, 88, 0.7)', // Set the color of the icons to #1B4458 with 70% opacity
+      color: 'rgba(27, 68, 88, 0.7)',
       minWidth: 30,
-      minHeight:30, // Set a minimum width for the icon container
+      minHeight: 30,
       display: 'flex',
       justifyContent: 'center',
-      // marginRight: theme.spacing(1), // Add margin to the right of the icon
     },
     logoImage: {
-      
       width: '77px',
-      height:'75px', // Increase the width of the logo image
+      height: '75px',
     },
-    
-  }),
+    link: {
+      textDecoration: 'none',
+    },
+  })
 );
 
 interface SideMenuProps {
@@ -101,39 +91,45 @@ const SideMenu: React.FC<SideMenuProps> = (props) => {
         classes={{
           paper: classes.drawerPaper,
         }}
-        // anchor="left"
       >
         <div className={classes.logo}>
-          {/* Use img tag with src attribute pointing to the logo image */}
           <Typography variant="h6" className={classes.logoText}>
             <img src={Log1} alt="Logo" className={classes.logoImage} />
           </Typography>
         </div>
         <List>
-          <ListItem button dense className={classes.listItem}>
-            <ListItemIcon className={classes.icon}>
-              <GridViewIcon fontSize='large'/>
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" classes={{ primary: classes.listItemText }} />
-          </ListItem>
-          <ListItem button dense className={classes.listItem}>
-            <ListItemIcon className={classes.icon}>
-              <PersonAddAltIcon fontSize='large' />
-            </ListItemIcon>
-            <ListItemText primary="User" classes={{ primary: classes.listItemText }} />
-          </ListItem>
-          <ListItem button dense className={classes.listItem}>
-            <ListItemIcon className={classes.icon}>
-              <SettingsIcon fontSize='large'/>
-            </ListItemIcon>
-            <ListItemText primary="Settings" classes={{ primary: classes.listItemText }} />
-          </ListItem>
-          <ListItem button dense className={classes.listItem}>
-            <ListItemIcon className={classes.icon}>
-              <LogoutIcon fontSize='large'/>
-            </ListItemIcon>
-            <ListItemText primary="Logout" classes={{ primary: classes.listItemText }} />
-          </ListItem>   
+          <Link to="/dashboard" className={classes.link}>
+            <ListItem button dense className={classes.listItem}>
+              <ListItemIcon className={classes.icon}>
+                <GridViewIcon fontSize="large" />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" classes={{ primary: classes.listItemText }} />
+            </ListItem>
+          </Link>
+          <Link to="/add-user" className={classes.link}>
+            <ListItem button dense className={classes.listItem}>
+              <ListItemIcon className={classes.icon}>
+                <PersonAddAltIcon fontSize="large" />
+              </ListItemIcon>
+              <ListItemText primary="User" classes={{ primary: classes.listItemText }} />
+            </ListItem>
+          </Link>
+          <Link to="/settings" className={classes.link}>
+            <ListItem button dense className={classes.listItem}>
+              <ListItemIcon className={classes.icon}>
+                <SettingsIcon fontSize="large" />
+              </ListItemIcon>
+              <ListItemText primary="Settings" classes={{ primary: classes.listItemText }} />
+            </ListItem>
+          </Link>
+          <Link to="/logout" className={classes.link}>
+            <ListItem button dense className={classes.listItem}>
+              <ListItemIcon className={classes.icon}>
+                <LogoutIcon fontSize="large" />
+              </ListItemIcon>
+              <ListItemText primary="Logout" classes={{ primary: classes.listItemText }} />
+            </ListItem>
+          </Link>
         </List>
       </Drawer>
       {/* Content goes here */}

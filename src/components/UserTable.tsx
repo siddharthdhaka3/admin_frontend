@@ -15,7 +15,6 @@ import { RootState } from '../store/store';
 import { useAppDispatch } from "../store/store";
 import { updateUserStatus, deleteUser } from '../store/userSlice';
 import { useUpdateUserStatusMutation, useDeleteUserMutation } from '../services/api';
-
 interface User {
   _id: string;
   name: string;
@@ -24,6 +23,7 @@ interface User {
 }
 
 interface UserTableProps {}
+
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -114,7 +114,7 @@ const UserTable: React.FC<UserTableProps> = () => {
       try {
         const response = await updateUserStatusMutation({ id: selectedUser._id, blocked: !selectedUser.blocked });
         if ('data' in response && response.data) {
-          dispatch(updateUserStatus({ id: selectedUser._id, blocked: !selectedUser.blocked }));
+          await dispatch(updateUserStatus({ id: selectedUser._id, blocked: !selectedUser.blocked }));
         }
       } catch (error) {
         console.error('Error toggling user status:', error);
